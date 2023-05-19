@@ -48,14 +48,16 @@ Class UserController extends Controller {
     }
 
     public function showUserID($id){
-        //$user = User::findOrFail($id);
-        $user = User::where('user_id', $id)->first();
-        if($user){
-            return $this->successResponse($user);
-        }
-        {
-            return $this->errorResponse('User ID Does Not Exists', Response::HTTP_NOT_FOUND);
-        }
+        $user = User::findOrFail($id);
+        return $this->successResponse($user);
+
+        // $user = User::where('user_id', $id)->first();
+        // if($user){
+        //     return $this->successResponse($user);
+        // }
+        // {
+        //     return $this->errorResponse('User ID Does Not Exists', Response::HTTP_NOT_FOUND);
+        // }
     }
 
     public function updateUser(Request $request, $id) { 
@@ -66,25 +68,22 @@ Class UserController extends Controller {
         ];
     
         $this->validate($request, $rules);
-    
         $user = User::findOrFail($id);
     
         $user->fill($request->all());
     
         if ($user->isClean()) {
-            return Response()->json("At least one value must change", 
+            return $this->errorResponse("At least one value must change", 
             Response::HTTP_UNPROCESSABLE_ENTITY);
-        } else {
+        } 
+
             $user->save();
             return $this->successResponse($user);
-        }
     }
 
     public function deleteUser($id) { 
         $user = User::findOrFail($id);
-    
         $user->delete();
-    
         return $this->successResponse($user);
     }
 }
